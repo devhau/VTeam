@@ -10,18 +10,11 @@ using System.Windows.Forms;
 
 namespace VTeam
 {
-    public partial class VMain : FormBase
+    public partial class RemoteDesktop : FormBase
     {
-        public VMain()
+        public RemoteDesktop()
         {
             InitializeComponent();
-        }
-        private void VMain_Load(object sender, EventArgs e)
-        {
-        }
-
-        private void btnConnectRemoteID_Click(object sender, EventArgs e)
-        {
         }
     }
 }

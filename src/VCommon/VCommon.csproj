@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Cryptography\" />
+    <Folder Include="Server\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VLib\VLib.csproj" />
   </ItemGroup>
 
 </Project>

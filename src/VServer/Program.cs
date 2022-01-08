@@ -1,6 +1,4 @@
-using System.Diagnostics;
-
-namespace VTeam
+namespace VServer
 {
     internal static class Program
     {
@@ -13,7 +11,7 @@ namespace VTeam
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new VMain());
+            Application.Run(new FormServer());
         }
     }
 }
