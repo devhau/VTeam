@@ -13,12 +13,14 @@ namespace VLib.Utilities
         {
             if (obj == null)
                 return null;
+            
 
-            BinaryFormatter bf = new BinaryFormatter();
-            MemoryStream ms = new MemoryStream();
-            bf.Serialize(ms, obj);
-
-            return ms.ToArray();
+            var formatter = new BinaryFormatter();
+            using (var stream = new MemoryStream())
+            {
+                formatter.Serialize(stream, obj);
+                return stream.ToArray();
+            }
         }
         public static Object ByteArrayToObject(byte[] arrBytes)
         {

@@ -7,13 +7,16 @@ using VLib.Common;
 
 namespace VLib.Common
 {
-    public class IMapping<TCenter>
-        where TCenter : ICenter
+    public class IMapping
     {
-        public TCenter? Center { get; set; }
-        Dictionary<int,Type> map = new Dictionary<int,Type>();
+        protected bool IsLock { get; private set; }
+        public void Lock()
+        {
+            this.IsLock = true;
+        }
+       protected readonly Dictionary<int,Type> map = new();
         public Command? GetCommand<TMessage>(TMessage m)
-                where TMessage : Message
+                where TMessage : IMessage
         {
             var type = map[m.MessageCode];
             if (type == null) return null;
@@ -21,9 +24,14 @@ namespace VLib.Common
             if(objType == null) return null;
             var objCommand = (Command)objType;
             if(objCommand == null) return null;
-            objCommand.SetCenter(Center);
             objCommand.SetMessage(m);
             return objCommand;
+        }
+        public void AddMapping<TType>(object id)
+        {
+            int id2 = (int)id;
+            if (IsLock && id2 < 100) throw new Exception("ID >100");
+            map[id2] = typeof(TType);
         }
     }
 }

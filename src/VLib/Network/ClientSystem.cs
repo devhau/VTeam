@@ -7,19 +7,47 @@ using System.Text;
 using System.Threading.Tasks;
 using VLib.Common;
 using VLib.Network.Stun;
+using VLib.Utilities;
 
 namespace VLib.Network
 {
-    public class ClientSystem : Center<ClientWorker, ClientSystem>
+    public class ClientSystem: Center<ClientWorker, ClientSystem>
     {
+        public event Action<string> Ping;
+        public void OnPing(string ID)
+        {
+            this.Ping?.Invoke(ID);  
+        }
         protected string IPAddress=string.Empty;
-        protected int Port=0; 
+        protected int Port = 0; 
         public UdpClient Client { get; private set; }
         public Guid ClientId = Guid.NewGuid();
         public ClientSystem()
         {
             Client= new UdpClient();
-            this.SetInstance();
+        }
+        public void SendMessage(IMessage message)
+        {
+            Client.Send(BinaryUtils.ObjectToByteArray(message));
+        }
+
+        public void SendMessage<TMessage, TEnity>(TEnity data) 
+                where TMessage : IMessage,new()
+                where TEnity : IEnity, new()
+        {
+            var message = new TMessage();
+            message.SetEnity<TEnity>(data);
+            SendMessage(message);
+        }
+        public void SendMessage<TMessage, TEnity>(Action<TEnity> action)
+               where TMessage : IMessage, new()
+               where TEnity : IEnity, new()
+        {
+            var message = new TMessage();
+            TEnity enity = new();
+            action(enity);
+            message.SetEnity<TEnity>(enity);
+            SendMessage(message);
         }
         public void Connect(string ip,int port)
         {
@@ -29,6 +57,10 @@ namespace VLib.Network
             this.ShowMessage("Connect:"+ip+":" + port);
             this.Client.Connect(System.Net.IPAddress.Parse(ip), port);
             this.AddWorker<ClientReceiverWorker>();
+            this.SendMessage<PingServer,PingInfo>((item) =>
+            {
+                item.ClientId = this.ClientId.ToString();
+            });
         }
         public void SendText(string text)
         {
@@ -36,15 +68,22 @@ namespace VLib.Network
             byte[] data = Encoding.Unicode.GetBytes(text);
             SendData(data);
         }
-        //  byte[] data = Encoding.ASCII.GetBytes(msg);
         public void SendData(byte[] data)
         {
             this.Client.Send(data);
         }
-        public void ReceiveData(byte[] data, IPEndPoint remoteIPEndPoint)
+        public void ReceiveData(byte[] data, ClientReceiveDataInfo clientReceiver)
         {
-            this.ShowMessage("Đang nhận dữ liệu từ Client:" + remoteIPEndPoint);
-            this.ShowMessage(Encoding.Unicode.GetString(data));
+            var msg = (IMessage)BinaryUtils.ByteArrayToObject(data);
+            var command = Mapping?.GetCommand(msg);
+            if (command != null)
+            {
+                if (command is CommandBase)
+                {
+                    ((CommandBase)command).SetReceiveData(clientReceiver);
+                }
+                command.DoCommand();
+            }
         }
     }
 }

@@ -38,6 +38,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtRemoteId = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -147,11 +148,22 @@
             this.txtRemoteId.Size = new System.Drawing.Size(419, 45);
             this.txtRemoteId.TabIndex = 0;
             // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblStatus.Location = new System.Drawing.Point(23, 569);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(91, 38);
+            this.lblStatus.TabIndex = 2;
+            this.lblStatus.Text = "label4";
+            // 
             // VMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(23F, 57F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(976, 616);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -168,6 +180,7 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -183,5 +196,6 @@
         private TextBox txtPass;
         private TextBox txtYourId;
         private Button btnConnectRemoteID;
+        private Label lblStatus;
     }
 }

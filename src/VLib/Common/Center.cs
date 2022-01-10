@@ -17,23 +17,25 @@ namespace VLib.Common
     public abstract class CenterThread<TCenter> : VWorker where TCenter : ICenter
     {
         public TCenter? Center { set; get; }
+        public TCenter2? GetCenter<TCenter2>() where TCenter2 : class,new()
+        {
+            if(Center!=null && Center is TCenter2 center) return center;
+            return null;
+        }
     }
     public abstract class Center<TThread, TCenter> : Messagable, ICenter
        where TThread : CenterThread<TCenter>
        where TCenter : class, ICenter,new()
     {
-        private List<VWorker> workers = new List<VWorker>();
-        protected IMapping<TCenter>? Mapping;
+        private readonly List<VWorker> workers = new();
+        protected IMapping? Mapping;
         protected List<VWorker> Workers
         {
             get { return workers; }
         }
-        protected void AddMapping<TMapping>() where TMapping : IMapping<TCenter>, new()
+        protected void AddMapping<TMapping>() where TMapping : IMapping, new()
         {
-            this.Mapping = new TMapping
-            {
-                Center = this as TCenter
-            };
+            this.Mapping = new TMapping();
         }
 
         protected void AddWorker<TWorker>(Action<TWorker>? action=null) where TWorker : TThread, new()
@@ -72,14 +74,6 @@ namespace VLib.Common
         protected void StopHelper()
         {
         }
-
-
-
-        public static TCenter? Instance = null;
-
-        protected void SetInstance() { Instance = this as TCenter; }
-
-        protected void RemoveInstance() { Instance = null; }
 
         public bool IsDebug { set; get; }
 

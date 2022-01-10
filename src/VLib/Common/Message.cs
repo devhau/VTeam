@@ -7,25 +7,30 @@ using VLib.Utilities;
 
 namespace VLib.Common
 {
-    public class Message
+    [Serializable]
+    public class IEnity
     {
-        public int MessageCode { get;protected set; }
-        public byte[]? MessageData { get; protected set; }
+
+    }
+    [Serializable]
+    public class IMessage
+    {
+        public IMessage() { }
+        public int MessageCode { get;  set; } = 0;
+        public byte[]? MessageData { get;  set; } = null;
         public void SetData(byte[]? _data)
         {
             this.MessageData = _data;
         }
-    }
-    public class Message<TEnity> : Message where TEnity : class
-    {
-        public void SetEnity(TEnity enity)
+        public void SetEnity<TEnity>(TEnity? enity) where TEnity : IEnity,new()
         {
             if (enity != null)
                 this.SetData(BinaryUtils.ObjectToByteArray(enity));
+            else this.SetData(null);
         }
-        public TEnity? GetEnity()
+        public TEnity? GetEnity<TEnity>() where TEnity : IEnity, new()
         {
-            if(MessageData==null) return null;
+            if (MessageData == null) return null;
             return (TEnity?)BinaryUtils.ByteArrayToObject(MessageData);
         }
     }

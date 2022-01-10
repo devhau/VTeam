@@ -16,7 +16,11 @@ namespace VLib.Network
     {
         protected override void DoWork()
         {
-            Center?.ReceiveData(this.Center.Client.Receive(ref remoteIPEndPoint), remoteIPEndPoint);
+            Center?.ReceiveData(this.Center.Client.Receive(ref remoteIPEndPoint), new ClientReceiveDataInfo()
+            {
+                Current = this,
+                IP = this.remoteIPEndPoint
+            });
         }
         private IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
 

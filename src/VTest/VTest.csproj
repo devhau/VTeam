@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\VCommon\VCommon.csproj" />
     <ProjectReference Include="..\VLib\VLib.csproj" />
   </ItemGroup>
 

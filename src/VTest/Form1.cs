@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using VCommon;
 using VLib.Network;
 using VLib.Network.Stun;
 
@@ -13,9 +14,8 @@ namespace VTest
         
         private void button1_Click(object sender, EventArgs e)
         {
-            CenterSystem.Instance = new CenterSystem();
-            CenterSystem.Instance.Start();
-            CenterSystem.Instance.Message += Center_Message;
+            Server.Instance.Start();
+            Server.Instance.Message += Center_Message;
         }
 
         private void Center_Message(string obj)
@@ -25,23 +25,16 @@ namespace VTest
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            CenterSystem.Instance?.Stop();
-            ClientSystem.Instance?.Stop();
+            Client.Instance?.Stop();
+            Server.Instance?.Stop();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (ClientSystem.Instance == null)
-            {
-                ClientSystem.Instance = new ClientSystem();
-                ClientSystem.Instance.Message += Client_Message;
-                ClientSystem.Instance.Connect("167.179.95.220", 2515);
-                ClientSystem.Instance.Start();
-            }
-            if (ClientSystem.Instance != null)
-            {
-                ClientSystem.Instance.SendText("Hello");
-            }
+                Client.Instance.Message += Client_Message;
+                Client.Instance.Connect("167.179.95.220", 2515);
+                Client.Instance.Start();
+                Client.Instance.SendText("Hello");
         }
 
         private void Client_Message(string obj)
