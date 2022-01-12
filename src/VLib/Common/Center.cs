@@ -27,6 +27,11 @@ namespace VLib.Common
        where TThread : CenterThread<TCenter>
        where TCenter : class, ICenter,new()
     {
+        public ICrypt Crypt { private set;  get; } = new NoneCrypt();
+        public void AddCrypt<TCrypt>() where TCrypt: ICrypt,new()
+        {
+            Crypt = new TCrypt();
+        }
         private readonly List<VWorker> workers = new();
         protected IMapping? Mapping;
         protected List<VWorker> Workers

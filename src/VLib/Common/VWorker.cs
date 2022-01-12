@@ -70,13 +70,15 @@ namespace VLib.Common
                 {
                     DoWork();
                 }
-                catch (ThreadAbortException)
+                catch (ThreadAbortException ex)
                 {
+                    Console.WriteLine(ex.ToString());
                     isRuning = false;
                 }
                 catch (Exception ex)
                 {
-                   // ShowMessage(ex.Message);
+                    Console.WriteLine(ex.ToString());
+                    // ShowMessage(ex.Message);
                     Error?.Invoke(this, ex);
                 }
 

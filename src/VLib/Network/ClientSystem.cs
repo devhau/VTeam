@@ -13,10 +13,10 @@ namespace VLib.Network
 {
     public class ClientSystem: Center<ClientWorker, ClientSystem>
     {
-        public event Action<string> Ping;
-        public void OnPing(string ID)
+        public event Action<string> Status;
+        public void OnStatus(string ID)
         {
-            this.Ping?.Invoke(ID);  
+            this.Status?.Invoke(ID);  
         }
         protected string IPAddress=string.Empty;
         protected int Port = 0; 
@@ -24,11 +24,16 @@ namespace VLib.Network
         public Guid ClientId = Guid.NewGuid();
         public ClientSystem()
         {
-            Client= new UdpClient();
+            Client = new UdpClient();
+        }
+        protected override void OnStart()
+        {
+            base.OnStart();
+            DoPing();
         }
         public void SendMessage(IMessage message)
         {
-            Client.Send(BinaryUtils.ObjectToByteArray(message));
+            SendData(BinaryUtils.ObjectToByteArray(message));
         }
 
         public void SendMessage<TMessage, TEnity>(TEnity data) 
@@ -57,30 +62,29 @@ namespace VLib.Network
             this.ShowMessage("Connect:"+ip+":" + port);
             this.Client.Connect(System.Net.IPAddress.Parse(ip), port);
             this.AddWorker<ClientReceiverWorker>();
-            this.SendMessage<PingServer,PingInfo>((item) =>
+           
+        }
+        public void DoPing()
+        {
+            this.SendMessage<PingServer, PingInfo>((item) =>
             {
                 item.ClientId = this.ClientId.ToString();
             });
         }
-        public void SendText(string text)
+        public void SendData(byte[]? data)
         {
-            this.ShowMessage(text);
-            byte[] data = Encoding.Unicode.GetBytes(text);
-            SendData(data);
-        }
-        public void SendData(byte[] data)
-        {
-            this.Client.Send(data);
+            if (data == null) return;
+            this.Client.Send(this.Crypt.Encrypt(data));
         }
         public void ReceiveData(byte[] data, ClientReceiveDataInfo clientReceiver)
         {
-            var msg = (IMessage)BinaryUtils.ByteArrayToObject(data);
+            var msg = (IMessage)BinaryUtils.ByteArrayToObject(this.Crypt.Decrypt(data));
             var command = Mapping?.GetCommand(msg);
             if (command != null)
             {
-                if (command is CommandBase)
+                if (command is CommandBase @base)
                 {
-                    ((CommandBase)command).SetReceiveData(clientReceiver);
+                    @base.SetReceiveData(clientReceiver);
                 }
                 command.DoCommand();
             }

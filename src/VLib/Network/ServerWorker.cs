@@ -21,7 +21,7 @@ namespace VLib.Network
 
         public void SendMessage(IMessage message, IPEndPoint? remoteIP = null)
         {
-            SendData(BinaryUtils.ObjectToByteArray(message),remoteIP);
+            SendData(BinaryUtils.ObjectToByteArray(message), remoteIP);
         }
 
         public void SendMessage<TMessage, TEnity>(TEnity data, IPEndPoint? remoteIP = null)
@@ -42,25 +42,21 @@ namespace VLib.Network
             message.SetEnity<TEnity>(enity);
             SendMessage(message, remoteIP);
         }
-        public void SendText(string text,IPEndPoint? remoteIP = null)
-        {
-            byte[] data = Encoding.Unicode.GetBytes(text);
-            SendData(data, remoteIP);
-        }
         public void SendData(byte[]? data, IPEndPoint? remoteIP=null)
         {
-            this.Client?.Send(data, remoteIP);
+            if (data == null) return;
+
+            this.Client?.Send(this.Center?.Crypt.Encrypt(data), remoteIP);
         }
         protected override void DoWork()
         {
-            if(Client!= null) Center?.ReceiveData(Client.Receive(ref remoteIPEndPoint), new ServerReceiveDataInfo()
+            var remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            Center?.ReceiveData(Client?.Receive(ref remoteIPEndPoint), new ServerReceiveDataInfo()
             {
                 Current = this,
-                IP=this.remoteIPEndPoint
+                IP= remoteIPEndPoint
             });
         }
-        public IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-
         protected override void OnPrepare(object sender)
         {
             Client = new(Port);

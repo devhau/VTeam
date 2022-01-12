@@ -24,15 +24,17 @@ namespace VLib.Network
                 return true;
             });
         }
-        public virtual void ReceiveData(byte[] data, ServerReceiveDataInfo centerReceiver)
+        public virtual void ReceiveData(byte[]? data, ServerReceiveDataInfo centerReceiver)
         {
-            var msg = (IMessage)BinaryUtils.ByteArrayToObject(data);
+            Console.WriteLine("Server:ReceiveData");
+            if (data == null) return;
+            var msg = (IMessage)BinaryUtils.ByteArrayToObject(this.Crypt.Decrypt(data));
             var command = Mapping?.GetCommand(msg);
             if (command != null)
             {
-                if (command is CommandBase)
+                if (command is CommandBase @base)
                 {
-                    ((CommandBase)command).SetReceiveData(centerReceiver);
+                    @base.SetReceiveData(centerReceiver);
                 }
                 command.DoCommand();
             }

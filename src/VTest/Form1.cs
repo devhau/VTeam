@@ -34,7 +34,6 @@ namespace VTest
                 Client.Instance.Message += Client_Message;
                 Client.Instance.Connect("167.179.95.220", 2515);
                 Client.Instance.Start();
-                Client.Instance.SendText("Hello");
         }
 
         private void Client_Message(string obj)

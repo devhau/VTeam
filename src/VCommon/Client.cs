@@ -10,6 +10,7 @@ namespace VCommon
         public IClient()
         {
             this.AddMapping<Mapping>();
+          //  this.AddCrypt<Aes256Crypt>();
         }
         public event EventHandler<ClientConnectedEventArgs>? ClientConnected;
         public void OnClientConnected(ClientInfo client)
@@ -18,7 +19,7 @@ namespace VCommon
         }
         public void ConnectToServer()
         {
-            SendMessage<ConnectToServer, ClientInfo>((item) =>
+            SendMessage<ConnectToServerMessage, ClientInfo>((item) =>
             {
                 item.ClientId = this.ClientId.ToString();
             });

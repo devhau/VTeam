@@ -28,7 +28,7 @@ namespace VLib.Network
             if (pingInfo == null) return;
             if (this.Status== ReceiveFrom.Client)  // Process on Client
             {
-                this.ClientReceive?.Current?.Center?.OnPing(pingInfo.ClientId);
+                this.ClientReceive?.Current?.Center?.OnStatus("Connected");
             }
             if (this.Status == ReceiveFrom.Server)  // Process on Server
             {

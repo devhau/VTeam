@@ -9,5 +9,6 @@ namespace VCommon.Commands
     public enum CommandCode:int
     {
         ConnectToServer=10000,
+        ConnectRemoteToUser = 10001,
     }
 }

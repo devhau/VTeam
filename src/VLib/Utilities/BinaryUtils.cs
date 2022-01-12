@@ -9,12 +9,11 @@ namespace VLib.Utilities
 {
     public class BinaryUtils
     {
-        public static  byte[]? ObjectToByteArray(object obj)
+        public static byte[]? ObjectToByteArray(object obj)
         {
             if (obj == null)
                 return null;
             
-
             var formatter = new BinaryFormatter();
             using (var stream = new MemoryStream())
             {

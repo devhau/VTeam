@@ -15,9 +15,9 @@ namespace VCommon.Commands
         public string Pass { get; set; } = string.Empty;
     }
     [Serializable]
-    public class ConnectToServer:IMessage
+    public class ConnectToServerMessage : IMessage
     {
-        public ConnectToServer()
+        public ConnectToServerMessage()
         {
             this.MessageCode = (int)CommandCode.ConnectToServer;
         }
@@ -27,16 +27,21 @@ namespace VCommon.Commands
         public override void DoCommand()
         {
             var clientInfo = this.Message?.GetEnity<ClientInfo>();
-            if (clientInfo == null) return;
+            if (clientInfo == null || string.IsNullOrEmpty(clientInfo.ClientId)) return;
             if (this.Status == ReceiveFrom.Client)  // Process on Client
             {
                 this.ClientReceive?.Current?.GetCenter<IClient>()?.OnClientConnected(clientInfo);
             }
             if (this.Status == ReceiveFrom.Server)  // Process on Server
             {
-                clientInfo.Pass = "1234";
-                this.ServerReceive?.Current?.SendMessage<ConnectToServer, ClientInfo>(clientInfo, this.ServerReceive?.IP);
+                if (this.ServerReceive == null|| this.ServerReceive.Current==null) return;
+                clientInfo.Pass =new Random().Next(1111,9999).ToString();
+                this.ServerReceive.Current.SendMessage<ConnectToServer, ClientInfo>(clientInfo, this.ServerReceive.IP);
+                IServer? center = this.ServerReceive.Current.GetCenter<IServer>();
+                if (center != null)
+                    center.Clients[clientInfo.ClientId] = this.ServerReceive;
             }
         }
     }
 }
+
